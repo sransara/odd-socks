@@ -1,0 +1,5 @@
+#+TITLE: README
+Implementation of [[https://www.ietf.org/rfc/rfc1928.txt][SOCKS 5 protocol]].
+
+* License
+[[https://choosealicense.com/licenses/mit/][MIT]]
