@@ -13,8 +13,15 @@ import (
 const CONN_HOST = "localhost:3030"
 
 func main() {
+
 	var laddr string
 	flag.StringVar(&laddr, "laddr", ":0", "Specify host:port to listen for incoming SOCKS connections")
+
+	flag.Parse()
+	if flag.NArg() > 0 {
+		flag.Usage()
+		return
+	}
 
 	listener, err := net.Listen("tcp", laddr)
 	if err != nil {
@@ -45,12 +52,15 @@ func serveConnection(ctx context.Context, conn net.Conn) {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	currHandler := oddsocks.HandleAuthNegotiation
+	var currHandler oddsocks.StateHandle
+	var err error
+
+	currHandler = oddsocks.HandleAuthNegotiation
 	for {
-		currHandler, err := currHandler(ctx, conn)
+		currHandler, err = currHandler(ctx, conn)
 
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		if currHandler == nil {
