@@ -436,6 +436,8 @@ func StartUDPRelay(ctx context.Context, clientConn net.PacketConn, clientSockNam
 		return
 	}
 
+	// TODO: brake this go routine in to a new function (part of issue #4)
+	// go routine to read from client unwrap packet and write data to destination
 	go func() {
 		buffer := make([]byte, 2048)
 
@@ -499,6 +501,8 @@ func StartUDPRelay(ctx context.Context, clientConn net.PacketConn, clientSockNam
 		}
 	}()
 
+	// TODO: brake this go routine in to a new function (part of issue #4)
+	// go routine to read from remote; wrap the data and write to client
 	go func() {
 		buffer := make([]byte, 2048)
 
