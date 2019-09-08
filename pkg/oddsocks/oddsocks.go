@@ -104,9 +104,11 @@ func HandleAuthNegotiation(ctx context.Context, conn net.Conn) (StateHandle, err
 	for _, method := range request.Methods {
 		if method == AuthMethodNoAuth {
 			err = ActionAuthNegotiation(conn, AuthMethodNoAuth)
+
 			if err != nil {
 				return nil, err
 			}
+
 			return HandleCmdRequest, nil
 		}
 	}
@@ -146,19 +148,22 @@ func (sn SockName) Raw() ([]uint8, error) {
 	var rawHost []uint8
 	if sn.Type == AddrTypeIPv4 {
 		if hostIP := sn.HostIP.To4(); hostIP != nil {
+			rawHost = make([]uint8, len(hostIP))
 			copy(rawHost, hostIP)
 		} else {
 			return raw, errors.New("Type and IP incompatible in sockname")
 		}
 	} else if sn.Type == AddrTypeIPv6 {
 		if hostIP := sn.HostIP.To16(); hostIP != nil {
+			rawHost = make([]uint8, len(hostIP))
 			copy(rawHost, hostIP)
 		} else {
 			return raw, errors.New("Type and IP incompatible in sockname")
 		}
 	} else if sn.Type == AddrTypeDomain {
 		hostnameLength := uint8(len(sn.Hostname))
-		rawHost = append([]uint8{hostnameLength}, []uint8(sn.Hostname)...)
+		rawHost = []uint8{hostnameLength}
+		rawHost = append(rawHost, []uint8(sn.Hostname)...)
 	} else {
 		return raw, errors.New("Uninitialized type in sockname")
 	}
@@ -344,6 +349,7 @@ func ActionCmdConnect(ctx context.Context, conn net.Conn, request CmdRequest) er
 	var err error
 
 	var dialer net.Dialer
+
 	remoteConn, err := dialer.DialContext(ctx, "tcp", request.Destination.String())
 	if err != nil {
 		return CmdError{err, CmdReplyHostUnreachable}
