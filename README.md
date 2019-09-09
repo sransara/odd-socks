@@ -12,6 +12,7 @@ Usage of oddsocks:
 ## Features
 - [X] No configuration (rulesets, username/password etc.) bells and whistles
 - [X] Make your own customization by injecting appropriate state handler or action into the state machine
+- [X] No external dependencies
 - [ ] Auth Methods
     - [X] No authentication
     - [ ] Username/password
